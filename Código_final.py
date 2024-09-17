@@ -2,6 +2,7 @@
 # Trabalho de Conclusão de Curso em Engenharia Mecânica
 # Universidade Federal de Pernambuco
 # Projeto: ROBÔ SOLUCIONADOR DO CUBO DE RUBIK COM USO DE MOTORES DE PASSO E SENSORES DE COR
+# Nome do arquivo: Código_final (utilizado no computador)
 # Data de atualização: 17/09/2024
 
 # Este código se divide em 3 partes:
