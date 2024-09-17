@@ -1,10 +1,20 @@
-#define PinS2_1  4 //Definição do Pino S2_1 na entrada digital 3
-#define PinS3_1 3 //Definição do Pino S3_1 na entrada digital 4
-#define PinOUT_1 5 //Definição do Pino OUT_1 na entrada digital 5
+// Autor: Lucas Arnaud de Araújo
+// Trabalho de Conclusão de Curso em Engenharia Mecânica
+// Universidade Federal de Pernambuco
+// Projeto: ROBÔ SOLUCIONADOR DO CUBO DE RUBIK COM USO DE MOTORES DE PASSO E SENSORES DE COR
+// Nome do arquivo: leitura_KNN (instalado no Arduino UNO)
+// Data de atualização: 17/09/2024
 
-#define PinS2_2  9 //Definição do Pino S2_2 na entrada digital 8
-#define PinS3_2 8 //Definição do Pino S3_2 na entrada digital 9
-#define PinOUT_2 10 //Definição do Pino OUT_2 na entrada digital 10
+// Este código se divide em 3 partes:
+// Parte 1: declarações de funções e variáveis, definição dos pinos dos dois sensores e inicialização da serial;
+// Parte 2: loop para realizar leituras ou imprimir sequência lida;
+// Parte 3: funções de cada um dos sensores para classificar valores RGB em cores pelo algoritmo KNN.
+
+// Para mais detalhes acesse o arquivo PDF denominado [TCC_Lucas_Arnaud] disponibilizado nesta pasta do github.
+
+//////////////////////////////////// PARTE 1 ////////////////////////////////////
+
+/////////////// DECLARAÇÃO DAS VARIÁVEIS E FUNÇÕES ////////////////
 
 int red[2]; //Declaração da variável que representará a cor vermelha
 int green[2]; //Declaração da variável que representará a cor verde
@@ -13,8 +23,18 @@ bool fazer_Leitura = false;
 String sequencia_cores = ""; // String para armazenar a sequência de cores lidas
 int sensorAtual = -1; // Variável para armazenar qual sensor usar
 
-void classificar_cor_1(int red, int green, int blue); // Inicialização da nova função de classificação
-void classificar_cor_2(int red, int green, int blue); // Inicialização da nova função de classificação
+void classificar_cor_1(int red, int green, int blue); // Inicialização da função de classificação do SENSOR 1
+void classificar_cor_2(int red, int green, int blue); // Inicialização da função de classificação do SENSOR 2
+
+/////////////// DEFINIÇÃO DOS PINOS E INICIALIZAÇÃO DA SERIAL ////////////////
+
+#define PinS2_1  4 //Definição do Pino S2_1 na entrada digital 3
+#define PinS3_1 3 //Definição do Pino S3_1 na entrada digital 4
+#define PinOUT_1 5 //Definição do Pino OUT_1 na entrada digital 5
+
+#define PinS2_2  9 //Definição do Pino S2_2 na entrada digital 8
+#define PinS3_2 8 //Definição do Pino S3_2 na entrada digital 9
+#define PinOUT_2 10 //Definição do Pino OUT_2 na entrada digital 10
 
 void setup() {
   pinMode(PinOUT_1, INPUT); //Definição do PinOUT como sendo um pino de entrada
@@ -25,8 +45,12 @@ void setup() {
   pinMode(PinS2_2, OUTPUT); //Definição do Pino S2 como sendo um pino de saída
   pinMode(PinS3_2, OUTPUT); //Definição do Pino S3 como sendo um pino de saída
 
-  Serial.begin(9600); //Inicia o monitor Serial com velocidade de 9600
+  Serial.begin(9600); //Inicia a Serial com velocidade de 9600 bps
 }
+
+//////////////////////////////////// PARTE 2 ////////////////////////////////////
+
+/////////////// LOOP PARA REALIZAR LEITURAS OU IMPRIMIR SEQUÊNCIA LIDA ////////////////
 
 void loop() {
   if (Serial.available() > 0) { // Verifica se há dados disponíveis na porta serial
@@ -49,58 +73,49 @@ void loop() {
       digitalWrite(PinS2_1, LOW); // Aciona um valor LOW ao Pino S2
       digitalWrite(PinS3_1, LOW); // Aciona um valor LOW ao Pino S3
       red[0] = pulseIn(PinOUT_1, LOW); // define red como sendo responsável por ler a informação de pulso LOW do pino out
-      red[0] = map (red[0], 13, 55, 255, 0);
+      red[0] = map (red[0], 13, 55, 255, 0); //mapeia o pulso lido para um valor entre 0 a 255
       delay(15); // delay de 15 milissegundos até o próximo comando
       digitalWrite(PinS2_1, HIGH); // Aciona um valor HIGH ao Pino S2
       digitalWrite(PinS3_1, HIGH); // Aciona um valor HIGH ao Pino S3
       green[0] = pulseIn(PinOUT_1, LOW); // define green como sendo responsável por ler a informação de pulso LOW do pino out
-      green[0] = map (green[0], 11, 60, 255, 0); //era 40 no lugar de 50
+      green[0] = map (green[0], 11, 60, 255, 0); //mapeia o pulso lido para um valor entre 0 a 255
       delay(15); // delay de 15 milissegundos até o próximo comando
       digitalWrite(PinS2_1, LOW); // Aciona um valor LOW ao Pino S2
       digitalWrite(PinS3_1, HIGH); // Aciona um valor HIGH ao Pino S3
       blue[0] = pulseIn(PinOUT_1, LOW); // define blue como sendo responsável por ler a informação de pulso LOW do pino out
-      blue[0] = map (blue[0], 13, 47, 255, 0);
+      blue[0] = map (blue[0], 13, 47, 255, 0); //mapeia o pulso lido para um valor entre 0 a 255
       delay(15); // delay de 15 milissegundos até o próximo comando
 
-      // Imprimindo valores e definindo as cores do SENSOR 1
+      // Imprimindo valores RGB do SENSOR 1
       Serial.print("Sensor 1: ");
-      //delay(100);
       Serial.print(red[0]);
-      //delay(100);
       Serial.print("\t| ");
-      //delay(100);
       Serial.print(green[0]);
-      //delay(100);
       Serial.print("\t| ");
-      //delay(100);
       Serial.print(blue[0]);
-      //delay(100);
       Serial.print("\t| ");
-      //delay(100);
-      //Serial.println("TESTE_1");
-      //delay(100);
+      // Aplica os valores na função de classificação do SENSOR 1 para definir a cor lida
       classificar_cor_1(red[0], green[0], blue[0]);
       
-       // Chamada da função classificar_cor para o SENSOR 1
     } else if (sensorAtual == 2) {
       // Leitura das cores do sensor 2
       digitalWrite(PinS2_2, LOW); // Aciona um valor LOW ao Pino S2
       digitalWrite(PinS3_2, LOW); // Aciona um valor LOW ao Pino S3
       red[1] = pulseIn(PinOUT_2, LOW); // define red como sendo responsável por ler a informação de pulso LOW do pino out
-      red[1] = map (red[1], 17, 111, 255, 0); //era 71 no lugar de 75
+      red[1] = map (red[1], 17, 111, 255, 0); //mapeia o pulso lido para um valor entre 0 a 255
       delay(15); // delay de 15 milissegundos até o próximo comando
       digitalWrite(PinS2_2, HIGH); // Aciona um valor HIGH ao Pino S2
       digitalWrite(PinS3_2, HIGH); // Aciona um valor HIGH ao Pino S3
       green[1] = pulseIn(PinOUT_2, LOW); // define green como sendo responsável por ler a informação de pulso LOW do pino out
-      green[1] = map (green[1], 19, 96, 255, 0);
+      green[1] = map (green[1], 19, 96, 255, 0); //mapeia o pulso lido para um valor entre 0 a 255
       delay(15); // delay de 15 milissegundos até o próximo comando
       digitalWrite(PinS2_2, LOW); // Aciona um valor LOW ao Pino S2
       digitalWrite(PinS3_2, HIGH); // Aciona um valor HIGH ao Pino S3
       blue[1] = pulseIn(PinOUT_2, LOW); // define blue como sendo responsável por ler a informação de pulso LOW do pino out
-      blue[1] = map (blue[1], 14, 75, 255, 0);
+      blue[1] = map (blue[1], 14, 75, 255, 0); //mapeia o pulso lido para um valor entre 0 a 255
       delay(15); // delay de 15 milissegundos até o próximo comando
 
-      // Imprimindo valores e definindo as cores do SENSOR 2
+      // Imprimindo valores RGB do SENSOR 2
       Serial.print("Sensor 2: ");
       Serial.print(red[1]);
       Serial.print("\t| ");
@@ -108,19 +123,20 @@ void loop() {
       Serial.print("\t| ");
       Serial.print(blue[1]);
       Serial.print("\t| ");
-      classificar_cor_2(red[1], green[1], blue[1]); // Chamada da função classificar_cor para o SENSOR 2
+      // Aplica os valores na função de classificação do SENSOR 2 para definir a cor lida
+      classificar_cor_2(red[1], green[1], blue[1]);
     }
-    fazer_Leitura = false;
+    fazer_Leitura = false; // atribue valor false a variável fazer_Leitura para que outra solicitação de leitura possa ser feita
   }
 }
 
+//////////////////////////////////// PARTE 3 ////////////////////////////////////
+
+/////////////// FUNÇÃO PARA CLASSIFICAR OS VALORES RGB DO SENSOR 1 EM COR PELO ALGORITMO KNN ////////////////
+
 void classificar_cor_1(int red, int green, int blue) {
 
-  //delay(100);
-  //Serial.println("TESTE_2");
-  //delay(100);
-
-  // 60 amostras de cada cor (red, green, blue)
+ // 10 amostras (red, green, blue) de cada cor ("U - Branco", "D - Amarelo", "F - Vermelho", "B - Laranja",  "L - Verde", "R - Azul")
   int amostras[60][3] = {
     {219, 203, 210}, {213, 203, 218}, {225, 203, 218}, {219, 203, 218}, {219, 229, 218}, {213, 208, 218}, {213, 193, 203}, 
     {206, 187, 195}, {206, 193, 203}, {200, 187, 195}, //BRANCO
@@ -135,20 +151,14 @@ void classificar_cor_1(int red, int green, int blue) {
     {55, 99, 105}, {55, 52, 83}, {43, 73, 90}, {61, 62, 98}, {67, 83, 98}, {67, 52, 90}, {67, 83, 120}, {103, 94, 113}, 
     {79, 73, 105}, {91, 73, 113} // AZUL
 };
-
-
   // Nome das cores
   String cores[6] = {"U - Branco", "D - Amarelo", "F - Vermelho", "B - Laranja",  "L - Verde", "R - Azul"};
 
-  // Armazenar distâncias e índice de cores correspondentes
+  // Armazena as distâncias e os índices de cores correspondentes
   float distancias[60];
   int indices_cor[60];
 
-  //delay(100);
-  //Serial.println("TESTE_3");
- // delay(100);
-
-  // Calcular a distância euclidiana para cada amostra
+  // Calcula a distância euclidiana para cada amostra
   for (int i = 0; i < 60; i++) {
     int amostraRed = amostras[i][0];
     int amostraGreen = amostras[i][1];
@@ -160,7 +170,7 @@ void classificar_cor_1(int red, int green, int blue) {
       pow((blue - amostraBlue), 2)
     );
 
-    // Classificar as amostras em cores (divisão por blocos de 10)
+    // Classificar as amostras em cores (divisão por 6 blocos de 10)
     if (i < 10) {
       indices_cor[i] = 0; // Branco
     } else if (i < 20) {
@@ -176,7 +186,7 @@ void classificar_cor_1(int red, int green, int blue) {
     }
   }
 
-  // Ordenar as distâncias (com bubble sort por simplicidade)
+  // Ordena as distâncias (com bubble sort)
   for (int i = 0; i < 59; i++) {
     for (int j = 0; j < 59 - i; j++) {
       if (distancias[j] > distancias[j + 1]) {
@@ -193,14 +203,14 @@ void classificar_cor_1(int red, int green, int blue) {
     }
   }
 
-  // Agora, fazemos a votação com os 3 vizinhos mais próximos (K=3)
-  int votos[6] = {0, 0, 0, 0, 0, 0};  // Corrigido para 6 posições, uma para cada cor
+  // Se faz a votação com os 3 vizinhos mais próximos (K=3)
+  int votos[6] = {0, 0, 0, 0, 0, 0};  // 6 posições, uma para cada cor
 
   for (int i = 0; i < 3; i++) {
     votos[indices_cor[i]]++;  // Adiciona um voto para a cor correspondente
   }
 
-  // Encontrar a cor com o maior número de votos
+  // Encontra a cor com o maior número de votos
   int maiorVoto = 0;
   int indiceCor = -1;
   for (int i = 0; i < 6; i++) {
@@ -212,24 +222,19 @@ void classificar_cor_1(int red, int green, int blue) {
 
   // Exibe a cor identificada
   if (indiceCor != -1) {
-    //delay(15);
-    Serial.println(cores[indiceCor]);
-    sequencia_cores += cores[indiceCor].charAt(0);  // Armazena a primeira letra da cor
-  } else {
+    Serial.println(cores[indiceCor]); // Imprime na serial a cor identificada
+    sequencia_cores += cores[indiceCor].charAt(0);  // Armazena a primeira letra da cor da sequência de cores
+  } else { // Se a cor for desconhecida, imprime mensagem na serial e adiciona 'X' na sequencia de cores lidas
     Serial.println("Desconhecida");
     sequencia_cores += 'X';
   }
-
-  //Serial.println(sequencia_cores);  // Exibe a sequência de cores
 }
+
+/////////////// FUNÇÃO PARA CLASSIFICAR OS VALORES RGB DO SENSOR 2 EM COR PELO ALGORITMO KNN ////////////////
 
 void classificar_cor_2(int red, int green, int blue) {
 
-  //delay(100);
-  //Serial.println("TESTE_2");
-  //delay(100);
-
-  // 60 amostras de cada cor (red, green, blue)
+   // 10 amostras (red, green, blue) de cada cor ("U - Branco", "D - Amarelo", "F - Vermelho", "B - Laranja",  "L - Verde", "R - Azul")
   int amostras[30][3] = {
     {228, 238, 230}, {231, 238, 230}, {231, 235, 230}, {231, 238, 234}, {225, 232, 230},// BRANCO
     {184, 162, 79}, {190, 169, 92}, {187, 166, 88}, {184, 162, 84}, {193, 176, 96}, // AMARELO
@@ -239,19 +244,14 @@ void classificar_cor_2(int red, int green, int blue) {
     {22, 46, 92}, {22, 40, 88}, {19, 46, 121}, {27, 50, 100}, {35, 56, 100},  // AZUL
 };
 
-
   // Nome das cores
   String cores[6] = {"U - Branco", "D - Amarelo", "F - Vermelho", "B - Laranja", "L - Verde", "R - Azul"};
 
-  // Armazenar distâncias e índice de cores correspondentes
+  // Armazena as distâncias e os índice de cores correspondentes
   float distancias[30];
   int indices_cor[30];
 
-  //delay(100);
-  //Serial.println("TESTE_3");
-  //delay(100);
-
-  // Calcular a distância euclidiana para cada amostra
+  // Calcula a distância euclidiana para cada amostra
   for (int i = 0; i < 30; i++) {
     int amostraRed = amostras[i][0];
     int amostraGreen = amostras[i][1];
@@ -263,7 +263,7 @@ void classificar_cor_2(int red, int green, int blue) {
       pow((blue - amostraBlue), 2)
     );
 
-    // Classificar as amostras em cores (divisão por blocos de 10)
+    // Classifica as amostras em cores (divisão por 6 blocos de 5)
     if (i < 5) {
       indices_cor[i] = 0; // Branco
     } else if (i < 10) {
@@ -279,7 +279,7 @@ void classificar_cor_2(int red, int green, int blue) {
     }
   }
 
-  // Ordenar as distâncias (com bubble sort por simplicidade)
+  // Ordenar as distâncias (com bubble sort)
   for (int i = 0; i < 29; i++) {
     for (int j = 0; j < 29 - i; j++) {
       if (distancias[j] > distancias[j + 1]) {
@@ -296,14 +296,14 @@ void classificar_cor_2(int red, int green, int blue) {
     }
   }
 
-  // Agora, fazemos a votação com os 3 vizinhos mais próximos (K=3)
-  int votos[6] = {0, 0, 0, 0, 0, 0};  // Corrigido para 6 posições, uma para cada cor
+  // Se faz a votação com os 3 vizinhos mais próximos (K=3)
+  int votos[6] = {0, 0, 0, 0, 0, 0};  // 6 posições, uma para cada cor
 
   for (int i = 0; i < 3; i++) {
     votos[indices_cor[i]]++;  // Adiciona um voto para a cor correspondente
   }
 
-  // Encontrar a cor com o maior número de votos
+  // Encontra a cor com o maior número de votos
   int maiorVoto = 0;
   int indiceCor = -1;
   for (int i = 0; i < 6; i++) {
@@ -312,16 +312,12 @@ void classificar_cor_2(int red, int green, int blue) {
       indiceCor = i;
     }
   }
-   //delay(5000);
   // Exibe a cor identificada
   if (indiceCor != -1) {
-    //delay(15);
-    Serial.println(cores[indiceCor]);
+    Serial.println(cores[indiceCor]); // Imprime na serial a cor identificada
     sequencia_cores += cores[indiceCor].charAt(0);  // Armazena a primeira letra da cor
-  } else {
+  } else { // Se a cor for desconhecida, imprime mensagem na serial e adiciona 'X' na sequencia de cores lidas
     Serial.println("Desconhecida");
     sequencia_cores += 'X';
   }
-
-  //Serial.println(sequencia_cores);  // Exibe a sequência de cores
 }
