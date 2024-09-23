@@ -8,7 +8,7 @@ Por outro lado, a leitura das cores é realizada com dois sensores de cor, a par
 O projeto foi validado em testes para diferentes padrões do cubo e demonstrou sua capacidade de operar de forma eficaz. Nessas avaliações, o robô alcançou uma mediana de 39 leituras corretas e acertou 1375 das 1776 leituras (77,42\%) de cores. Acerca da velocidade, foi alcançado um tempo mínimo de resolução de 3,3 segundos, um desempenho comparável a projetos de referência na área.
 ## Imagens
 ![image](https://github.com/user-attachments/assets/33190a0c-9096-4076-8430-f4bd501f8b46)
-## Extra
-Para mais informações consultar o PDF nomeado TCC_Lucas_Arnaud.
+## Importante
+Para compreensão detalhada do projeto mecânico, montagem do hardware, códigos implementados, funcionamento do projeto e suas referências consultar o PDF nomeado **TCC_Lucas_Arnaud**.
 
 
